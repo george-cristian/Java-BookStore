@@ -19,15 +19,16 @@ import javax.inject.Inject;
  */
 
 public class ControllerServlet extends HttpServlet {
-		private static final long serialVersionUID = 1L;
-		private DBConnection dbConnection;
+	
+	private static final long serialVersionUID = 1L;
+	private DBConnection dbConnection;
 
-		@Inject
+	@Inject
     private BookDAO bookDAO;
+	
     /**
      * @see HttpServlet#HttpServlet()
      */
-
     public void init() {
 			dbConnection = new DBConnection();
 			bookDAO = new BookDAO(dbConnection.getConnection());
@@ -52,21 +53,31 @@ public class ControllerServlet extends HttpServlet {
 			switch(action) {
 				case "/admin":
 					 showBookAdmin(request, response);
-           break;
-			  case "/new":
+					 break;
+				case "/new":
 					showNewForm(request, response);
-          break;
+					break;
 				case "/insert":
 					insertBook(request, response);
-          break;
-        default:
+					break;
+				case "/delete":
+					deleteBook(request, response);
+					break;
+				default:
 				   listBooks(request, response);
-           break;
+				   break;
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private void deleteBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int bookId = Integer.parseInt(request.getParameter("id"));
+		bookDAO.deleteBook(bookId);
+		
+		response.sendRedirect("list");
 	}
 
 	private void showBookAdmin(HttpServletRequest request, HttpServletResponse response)
